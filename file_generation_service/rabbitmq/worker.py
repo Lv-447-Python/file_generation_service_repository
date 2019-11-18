@@ -1,5 +1,7 @@
 import pika
 import json
+import requests
+import werkzeug.exceptions
 import rabbitmq_config
 from utils.csv_generator import generate_filtered_csv_file
 from utils.xlsx_generator import generate_filtered_xlsx_file
@@ -10,21 +12,46 @@ def check_ext(file_path):
 
 
 def request_to_file_service():
-    return 'file_generation_service/static/Test_dataset_filterMe.csv'
+
+    result_of_request = requests.get('http://localhost:5000/testfile')
+
+    data = result_of_request.json()
+
+    return data
+
+
+
+    # return 'file_generation_service/static/Test_dataset_filterMe.csv'
 
 
 def request_to_history_service():
-    return list(range(1,101))
+    
+    result_of_request = requests.get('http://localhost:5000/testhistory')
+
+    data = result_of_request.json()
+
+    return data
+
+
 
 
 def callback(ch, method, properties, body):
 
     try:
         req = json.loads(body)
+        # user_id = req['user_id']
+        # file_id = req['file_id']
+        # filter_id = req['filter_id']
+
+        file_path = request_to_file_service()
+        rows_id = request_to_history_service()
+
         print(req)
-        
+        print(file_path)
+        print(rows_id)
+
     except:
-        return 'smth went wrong...'
+        print('smth went wrong...')
 
 
 def main():

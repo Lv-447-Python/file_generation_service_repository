@@ -22,6 +22,3 @@ def start_generating_filtered_file(message):
     print(" [x] Send to queue ")
 
     connection.close()
-
-if __name__ == "__main__":
-    start_generating_filtered_file('fdssfdsf')
