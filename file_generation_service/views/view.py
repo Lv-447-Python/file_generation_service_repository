@@ -3,6 +3,7 @@ from flask_restful import Resource
 from flask_api import status
 from file_generation_service.configs.flask_config import api
 from file_generation_service.rabbitmq.producer import start_generating_filtered_file
+import random
 
 
 class FileGenerationResource(Resource):
@@ -25,10 +26,17 @@ class TestFileResource(Resource):
 
     def get(self):
 
-        result = jsonify({
-            'path': 'file_generation_service/static/Test_dataset_filterMe.csv',
-            'msg': 'Success',
-            'status': status.HTTP_200_OK})
+        if random.randint(1,2) == 1:
+            result = jsonify({
+                'path': '/home/orik/Documents/programming/project/file_generation_service_repository/file_generation_service/static/Test_dataset_filterMe.csv',
+                'msg': 'Success',
+                'status': status.HTTP_200_OK})
+        else:
+            result = jsonify({
+                'path': '/home/orik/Documents/programming/project/file_generation_service_repository/file_generation_service/static/Test_dataset_filterMe.xlsx',
+                'msg': 'Success',
+                'status': status.HTTP_200_OK})
+
 
         return result
 
