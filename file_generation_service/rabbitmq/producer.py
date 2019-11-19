@@ -1,6 +1,6 @@
 import pika
 import json
-from . import rabbitmq_config
+from file_generation_service.rabbitmq import rabbitmq_config
 
 
 def start_generating_filtered_file(message):

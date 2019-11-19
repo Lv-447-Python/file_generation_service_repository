@@ -12,7 +12,8 @@ def check_ext(file_path):
 
 def request_to_file_service(file_id):
 
-    result_of_request = requests.get('http://localhost:5000/testfile')
+    result_of_request = requests.get(
+        f'http://localhost:5000/testfile?file_id={file_id}')
     # result_of_request = requests.get(f'http://localhost:5000/file?file_id={file_id}')
 
     data = result_of_request.json()
@@ -23,7 +24,7 @@ def request_to_file_service(file_id):
 
         return file_path
     else:
-        print('smth went wrong...')
+        print(data['msg'])
         return
 
 
@@ -41,30 +42,30 @@ def request_to_history_service(user_id, file_id, filter_id):
 
         return rows_id
     else:
-        print('smth went wrong...')
+        print(data['errors'])
         return
 
 
 def callback(ch, method, properties, body):
-
-    # try:
 
     req = json.loads(body)
     user_id = req['user_id']
     file_id = req['file_id']
     filter_id = req['filter_id']
 
-    file_path = request_to_file_service(file_id)
-    rows_id = request_to_history_service(user_id, file_id, filter_id)
+    try:
+        file_path = request_to_file_service(file_id)
+        rows_id = request_to_history_service(user_id, file_id, filter_id)
+    except TypeError:
+        print('Poor response from services...')
+        return None
 
     if check_ext(file_path) == 'csv':
         new_file_path = generate_filtered_csv_file(file_path, rows_id)
     else:
         new_file_path = generate_filtered_xlsx_file(file_path, rows_id)
-    print(new_file_path)
 
-    # except:
-    #     print('smth went wrong...')
+    print(new_file_path)
 
 
 def main():
@@ -78,7 +79,7 @@ def main():
         queue=rabbitmq_config.file_generation_queue_name, durable=True)
 
     channel.basic_consume(
-        queue=rabbitmq_config.file_generation_queue_name, on_message_callback=callback)
+        queue=rabbitmq_config.file_generation_queue_name, on_message_callback=callback, auto_ack=True)
 
     channel.basic_qos(prefetch_count=1)
 

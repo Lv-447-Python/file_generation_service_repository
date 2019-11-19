@@ -17,26 +17,32 @@ class FileGenerationResource(Resource):
         }
 
         if None in data.values():
-            return status.HTTP_400_BAD_REQUEST
+            return 'Bad ID', 400
         else:
             start_generating_filtered_file(data)
+            return 'Your request has been submitted for processing', 200
+
 
 
 class TestFileResource(Resource):
 
     def get(self):
 
-        if random.randint(1,2) == 1:
+        if request.args.get('file_id', type=int) == 1:
             result = jsonify({
                 'path': '/home/orik/Documents/programming/project/file_generation_service_repository/file_generation_service/static/Test_dataset_filterMe.csv',
                 'msg': 'Success',
                 'status': status.HTTP_200_OK})
-        else:
+        elif request.args.get('file_id', type=int) == 2:
             result = jsonify({
                 'path': '/home/orik/Documents/programming/project/file_generation_service_repository/file_generation_service/static/Test_dataset_filterMe.xlsx',
                 'msg': 'Success',
                 'status': status.HTTP_200_OK})
-
+        else:
+            result = jsonify({
+                'path': '',
+                'msg': 'Failed',
+                'status': status.HTTP_400_BAD_REQUEST})
 
         return result
 
@@ -48,14 +54,10 @@ class TestHistoryResource(Resource):
         result = jsonify(
             {
                 "data": {
-                    "file_id": 3,
+                    "file_id": 1,
                     "filter_date": "2019-11-18T12:31:19.742327",
-                    "filter_id": 6,
-                    "rows_id": [
-                        1,
-                        2,
-                        12
-                    ],
+                    "filter_id": 1,
+                    "rows_id": list(range(1,101)),
                     "user_id": 2
                 },
                 "errors": "",
