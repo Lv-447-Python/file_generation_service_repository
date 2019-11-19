@@ -7,7 +7,12 @@ from utils.xlsx_generator import generate_filtered_xlsx_file
 
 
 def check_ext(file_path):
-    return file_path.split('.')[-1]
+    try:
+        ext = file_path.split('.')[-1]
+    except AttributeError:
+        print('Poor file name...')
+        return
+    return ext
 
 
 def request_to_file_service(file_id):
@@ -58,12 +63,15 @@ def callback(ch, method, properties, body):
         rows_id = request_to_history_service(user_id, file_id, filter_id)
     except TypeError:
         print('Poor response from services...')
-        return None
+        return
 
     if check_ext(file_path) == 'csv':
         new_file_path = generate_filtered_csv_file(file_path, rows_id)
-    else:
+    elif check_ext(file_path) in ['xls', 'xlsx']:
         new_file_path = generate_filtered_xlsx_file(file_path, rows_id)
+    else:
+        print('Poor file name...')
+        return
 
     print(new_file_path)
 
