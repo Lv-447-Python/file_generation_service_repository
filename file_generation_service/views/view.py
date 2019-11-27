@@ -1,14 +1,18 @@
 from flask import request, jsonify
 from flask_restful import Resource
-from flask_api import status
 from file_generation_service.configs.flask_config import api
 from file_generation_service.rabbitmq.producer import start_generating_filtered_file
-import random
 
 
 class FileGenerationResource(Resource):
+    """File generation resource class."""
 
     def get(self):
+        """
+        Method for HTTP GET method working out. Used for start generation filtered file.
+        Returns:
+            Message and status code.
+        """
 
         data = {
             'user_id': request.args.get('user_id', type=int),
@@ -23,26 +27,27 @@ class FileGenerationResource(Resource):
             return 'Your request has been submitted for processing', 200
 
 
-
 class TestFileResource(Resource):
 
     def get(self):
+        """
+        Method for HTTP GET method working out. Used for start generation filtered file.
+        Returns:
+            Json file with path to file, message and status code.
+        """
 
         if request.args.get('file_id', type=int) == 1:
             result = jsonify({
                 'path': '/home/orik/Documents/programming/project/file_generation_service_repository/file_generation_service/static/Test_dataset_filterMe.csv',
-                'msg': 'Success',
-                'status': status.HTTP_200_OK})
+                'message': 'Success'})
         elif request.args.get('file_id', type=int) == 2:
             result = jsonify({
                 'path': '/home/orik/Documents/programming/project/file_generation_service_repository/file_generation_service/static/Test_dataset_filterMe.xlsx',
-                'msg': 'Success',
-                'status': status.HTTP_200_OK})
+                'message': 'Success'})
         else:
             result = jsonify({
-                'path': '',
-                'msg': 'Failed',
-                'status': status.HTTP_400_BAD_REQUEST})
+                'error': 'File with such id not found'
+            })
 
         return result
 
@@ -50,18 +55,19 @@ class TestFileResource(Resource):
 class TestHistoryResource(Resource):
 
     def get(self):
+        """
+        Method for HTTP GET method working out. Used for start generation filtered file.
+        Returns:
+            Json file rows_id message and status code.
+        """
 
         result = jsonify(
             {
-                "data": {
-                    "file_id": 1,
-                    "filter_date": "2019-11-18T12:31:19.742327",
-                    "filter_id": 1,
-                    "rows_id": list(range(1,101)),
-                    "user_id": 2
-                },
-                "errors": "",
-                "status": 200
+                'user_id': 1,
+                'file_id': 2,
+                'filter_id': 3,
+                'rows_id': list(range(1, 500, 3)),
+                'date': 12345
             }
         )
 

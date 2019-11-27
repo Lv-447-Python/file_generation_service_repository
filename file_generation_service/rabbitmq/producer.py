@@ -1,9 +1,15 @@
 import pika
 import json
-from file_generation_service.rabbitmq import rabbitmq_config
+from file_generation_service.configs import rabbitmq_config
 
 
 def start_generating_filtered_file(message):
+    """
+    A function that connects to rabbitmq and push message to the queue.
+    Args:
+        message:
+            A message from view (json)
+    """
 
     connection = pika.BlockingConnection(
         pika.ConnectionParameters('localhost'))
