@@ -1,9 +1,16 @@
 import pika
 import json
 import requests
+import logging
+import logging.config
+
 from file_generation_service.configs import rabbitmq_config
 from file_generation_service.rabbitmq.utils.csv_generator import generate_filtered_csv_file
 from file_generation_service.rabbitmq.utils.xlsx_generator import generate_filtered_xlsx_file
+
+
+logging.config.fileConfig('/home/orik/Documents/programming/project/file_generation_service_repository/file_generation_service/configs/logging.conf')
+logger = logging.getLogger('fileGenApp')
 
 
 def check_ext(file_path):
@@ -19,7 +26,7 @@ def check_ext(file_path):
     try:
         ext = file_path.split('.')[-1]
     except AttributeError:
-        print('Poor file name...')
+        logger.error('Poor file name...')
         return
     return ext
 
@@ -41,11 +48,11 @@ def request_to_file_service(file_id):
 
     if result_of_request.status_code == 200:
         data = result_of_request.json()
-        print('Success')
+        logger.info('Success request to file service')
         file_path = data['path']
         return file_path
     else:
-        print('Error')
+        logger.error('Error request to file service')
         return
 
 
@@ -70,11 +77,11 @@ def request_to_history_service(user_id, file_id, filter_id):
 
     if result_of_request.status_code == 200:
         data = result_of_request.json()
-        print('Success')
+        logger.info('Success request to history service')
         rows_id = data['rows_id']
         return rows_id
     else:
-        print('Error')
+        logger.error('Error request to history service')
         return
 
 
@@ -109,7 +116,7 @@ def callback(ch, method, properties, body):
         file_path = request_to_file_service(file_id)
         rows_id = request_to_history_service(user_id, file_id, filter_id)
     except TypeError:
-        print('Poor response from services...')
+        logger.error('Poor response from services...')
         return
 
     if check_ext(file_path) == 'csv':
@@ -117,10 +124,10 @@ def callback(ch, method, properties, body):
     elif check_ext(file_path) in ['xls', 'xlsx']:
         new_file_path = generate_filtered_xlsx_file(file_path, rows_id)
     else:
-        print('Poor file name...')
+        logger.error('Poor file name...')
         return
 
-    print(new_file_path)
+    logger.info(f'New file path: {new_file_path}')
     return new_file_path
 
 
@@ -132,7 +139,7 @@ def main():
     connection = pika.BlockingConnection(
         pika.ConnectionParameters('localhost'))
 
-    print(' [x] Connection created ')
+    logger.info(' [x] Connection created ')
 
     channel = connection.channel()
 
@@ -144,7 +151,7 @@ def main():
 
     channel.basic_qos(prefetch_count=1)
 
-    print(' [x] Start consuming ')
+    logger.info(' [x] Start consuming ')
     channel.start_consuming()
 
 
