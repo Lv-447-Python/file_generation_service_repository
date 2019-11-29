@@ -1,5 +1,6 @@
-import pika
+"""Module which push message into rabbitmq queue"""
 import json
+import pika
 from file_generation_service.configs import rabbitmq_config
 
 

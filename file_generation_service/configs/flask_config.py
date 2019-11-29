@@ -1,3 +1,4 @@
+"""Configuration Flask app"""
 from flask import Flask
 from flask_restful import Api
 from flask_marshmallow import Marshmallow

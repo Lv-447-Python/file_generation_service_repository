@@ -1,13 +1,13 @@
-import pika
+"""Module for generating filtered file"""
 import json
-import requests
-import logging
 import logging.config
+
+import pika
+import requests
 
 from file_generation_service.configs import rabbitmq_config
 from file_generation_service.rabbitmq.utils.csv_generator import generate_filtered_csv_file
 from file_generation_service.rabbitmq.utils.xlsx_generator import generate_filtered_xlsx_file
-
 
 logging.config.fileConfig('/home/orik/Documents/programming/project/file_generation_service_repository/file_generation_service/configs/logging.conf')
 logger = logging.getLogger('fileGenApp')
@@ -27,7 +27,7 @@ def check_ext(file_path):
         ext = file_path.split('.')[-1]
     except AttributeError:
         logger.error('Poor file name...')
-        return
+        return None
     return ext
 
 
@@ -53,7 +53,7 @@ def request_to_file_service(file_id):
         return file_path
     else:
         logger.error('Error request to file service')
-        return
+        return None
 
 
 def request_to_history_service(user_id, file_id, filter_id):
@@ -82,7 +82,7 @@ def request_to_history_service(user_id, file_id, filter_id):
         return rows_id
     else:
         logger.error('Error request to history service')
-        return
+        return None
 
 
 def callback(ch, method, properties, body):
@@ -117,7 +117,7 @@ def callback(ch, method, properties, body):
         rows_id = request_to_history_service(user_id, file_id, filter_id)
     except TypeError:
         logger.error('Poor response from services...')
-        return
+        return None
 
     if check_ext(file_path) == 'csv':
         new_file_path = generate_filtered_csv_file(file_path, rows_id)
@@ -125,9 +125,9 @@ def callback(ch, method, properties, body):
         new_file_path = generate_filtered_xlsx_file(file_path, rows_id)
     else:
         logger.error('Poor file name...')
-        return
+        return None
 
-    logger.info(f'New file path: {new_file_path}')
+    logger.info('New file path: %s', new_file_path)
     return new_file_path
 
 
@@ -152,6 +152,7 @@ def main():
     channel.basic_qos(prefetch_count=1)
 
     logger.info(' [x] Start consuming ')
+
     channel.start_consuming()
 
 

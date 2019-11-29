@@ -1,3 +1,4 @@
+"""Module for file generation resource"""
 from flask import request, jsonify
 from flask_restful import Resource
 from file_generation_service.configs.flask_config import api
@@ -28,7 +29,7 @@ class FileGenerationResource(Resource):
 
 
 class TestFileResource(Resource):
-
+    """Test file resource"""
     def get(self):
         """
         Method for HTTP GET method working out. Used for start generation filtered file.
@@ -53,6 +54,7 @@ class TestFileResource(Resource):
 
 
 class TestHistoryResource(Resource):
+    """Test history resource"""
 
     def get(self):
         """

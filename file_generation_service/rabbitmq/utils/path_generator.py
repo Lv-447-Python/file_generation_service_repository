@@ -1,3 +1,4 @@
+"""Module for generation new file path"""
 from datetime import datetime
 
 

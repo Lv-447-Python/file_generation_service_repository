@@ -1,3 +1,4 @@
+"""Module for generation new csv files"""
 import pandas
 from file_generation_service.rabbitmq.utils.path_generator import new_path_generator
 
