@@ -9,7 +9,7 @@ from file_generation_service.configs import rabbitmq_config
 from file_generation_service.rabbitmq.utils.csv_generator import generate_filtered_csv_file
 from file_generation_service.rabbitmq.utils.xlsx_generator import generate_filtered_xlsx_file
 
-logging.config.fileConfig('/home/orik/Documents/programming/project/file_generation_service_repository/file_generation_service/configs/logging.conf')
+logging.config.fileConfig('../configs/logging.conf')
 logger = logging.getLogger('fileGenApp')
 
 
