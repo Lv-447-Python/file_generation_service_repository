@@ -1,11 +1,11 @@
-"""Module for generation new csv files"""
+"""Module for generation new xls/xlsx files"""
 import pandas
-from file_generation_service.rabbitmq.utils.path_generator import new_path_generator
+from rabbitmq.utils.path_generator import new_path_generator
 
 
-def generate_filtered_csv_file(file_path, rows_id):
+def generate_filtered_xlsx_file(file_path, rows_id):
     """
-    The method generates a new csv file,
+    The method generates a new xlsx file,
     based on the old one, and the line numbers that should be in the new one.
     Args:
         file_path:
@@ -17,7 +17,7 @@ def generate_filtered_csv_file(file_path, rows_id):
             The path to the file that was generated.
     """
 
-    data = pandas.read_csv(file_path)
+    data = pandas.read_excel(file_path)
 
     df = pandas.DataFrame(data)
 
@@ -25,6 +25,6 @@ def generate_filtered_csv_file(file_path, rows_id):
 
     new_file_path = new_path_generator(file_path)
 
-    filtered_data.to_csv(new_file_path, index=False, header=True)
+    filtered_data.to_excel(new_file_path, index=False, header=True)
 
     return new_file_path

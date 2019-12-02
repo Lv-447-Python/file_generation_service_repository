@@ -1,7 +1,8 @@
 """Module which push message into rabbitmq queue"""
 import json
 import pika
-from file_generation_service.configs import rabbitmq_config
+from rabbitmq.configs import rabbitmq_config
+from logger.logger import logger
 
 
 def start_generating_filtered_file(message):
@@ -26,6 +27,6 @@ def start_generating_filtered_file(message):
                               content_type='aplication/json',
                           ))
 
-    print(" [x] Send to queue ")
+    logger.info(" [x] Send to queue ")
 
     connection.close()

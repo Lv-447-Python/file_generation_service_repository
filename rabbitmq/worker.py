@@ -1,16 +1,14 @@
+#!usr/bin/env python
 """Module for generating filtered file"""
 import json
-import logging.config
 
 import pika
 import requests
 
-from file_generation_service.configs import rabbitmq_config
-from file_generation_service.rabbitmq.utils.csv_generator import generate_filtered_csv_file
-from file_generation_service.rabbitmq.utils.xlsx_generator import generate_filtered_xlsx_file
-
-logging.config.fileConfig('../configs/logging.conf')
-logger = logging.getLogger('fileGenApp')
+from rabbitmq.configs import rabbitmq_config
+from rabbitmq.utils.csv_generator import generate_filtered_csv_file
+from rabbitmq.utils.xlsx_generator import generate_filtered_xlsx_file
+from logger.logger import logger
 
 
 def check_ext(file_path):
@@ -103,9 +101,6 @@ def callback(ch, method, properties, body):
         new_file_path:
             The path to the generated file.
     """
-
-    # logging.config.fileConfig('./logging.conf')
-    # logger = logging.getLogger('FileGenApp')
 
     req = json.loads(body)
     user_id = req['user_id']
