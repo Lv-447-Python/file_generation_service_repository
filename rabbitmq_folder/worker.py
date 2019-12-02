@@ -2,13 +2,11 @@
 """Module for generating filtered file"""
 import json
 
-import pika
 import requests
 
-from rabbitmq.configs import rabbitmq_config
-from rabbitmq.utils.csv_generator import generate_filtered_csv_file
-from rabbitmq.utils.xlsx_generator import generate_filtered_xlsx_file
-from logger.logger import logger
+from utils.csv_generator import generate_filtered_csv_file
+from utils.xlsx_generator import generate_filtered_xlsx_file
+# from logger.logger import logger
 
 
 def check_ext(file_path):
@@ -24,7 +22,7 @@ def check_ext(file_path):
     try:
         ext = file_path.split('.')[-1]
     except AttributeError:
-        logger.error('Poor file name...')
+        # logger.error('Poor file name...')
         return None
     return ext
 
@@ -46,11 +44,11 @@ def request_to_file_service(file_id):
 
     if result_of_request.status_code == 200:
         data = result_of_request.json()
-        logger.info('Success request to file service')
+        # logger.info('Success request to file service')
         file_path = data['path']
         return file_path
     else:
-        logger.error('Error request to file service')
+        # logger.error('Error request to file service')
         return None
 
 
@@ -75,11 +73,11 @@ def request_to_history_service(user_id, file_id, filter_id):
 
     if result_of_request.status_code == 200:
         data = result_of_request.json()
-        logger.info('Success request to history service')
+        # logger.info('Success request to history service')
         rows_id = data['rows_id']
         return rows_id
     else:
-        logger.error('Error request to history service')
+        # logger.error('Error request to history service')
         return None
 
 
@@ -111,7 +109,7 @@ def callback(ch, method, properties, body):
         file_path = request_to_file_service(file_id)
         rows_id = request_to_history_service(user_id, file_id, filter_id)
     except TypeError:
-        logger.error('Poor response from services...')
+        # logger.error('Poor response from services...')
         return None
 
     if check_ext(file_path) == 'csv':
@@ -119,37 +117,11 @@ def callback(ch, method, properties, body):
     elif check_ext(file_path) in ['xls', 'xlsx']:
         new_file_path = generate_filtered_xlsx_file(file_path, rows_id)
     else:
-        logger.error('Poor file name...')
+        # logger.error('Poor file name...')
         return None
 
-    logger.info('New file path: %s', new_file_path)
+    # logger.info('New file path: %s', new_file_path)
     return new_file_path
 
 
-def main():
-    """
-    A function that connects to rabbitmq.
-    """
 
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters('localhost'))
-
-    logger.info(' [x] Connection created ')
-
-    channel = connection.channel()
-
-    channel.queue_declare(
-        queue=rabbitmq_config.file_generation_queue_name, durable=True)
-
-    channel.basic_consume(
-        queue=rabbitmq_config.file_generation_queue_name, on_message_callback=callback, auto_ack=True)
-
-    channel.basic_qos(prefetch_count=1)
-
-    logger.info(' [x] Start consuming ')
-
-    channel.start_consuming()
-
-
-if __name__ == "__main__":
-    main()

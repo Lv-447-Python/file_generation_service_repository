@@ -1,7 +1,7 @@
 """Module which push message into rabbitmq queue"""
 import json
 import pika
-from rabbitmq.configs import rabbitmq_config
+from rabbitmq_folder.configs import rabbitmq_config
 from logger.logger import logger
 
 

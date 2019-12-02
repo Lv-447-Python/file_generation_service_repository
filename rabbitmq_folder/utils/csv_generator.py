@@ -1,6 +1,6 @@
 """Module for generation new csv files"""
 import pandas
-from rabbitmq.utils.path_generator import new_path_generator
+from utils.path_generator import new_path_generator
 
 
 def generate_filtered_csv_file(file_path, rows_id):

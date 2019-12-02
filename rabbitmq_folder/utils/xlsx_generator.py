@@ -1,6 +1,6 @@
 """Module for generation new xls/xlsx files"""
 import pandas
-from rabbitmq.utils.path_generator import new_path_generator
+from utils.path_generator import new_path_generator
 
 
 def generate_filtered_xlsx_file(file_path, rows_id):

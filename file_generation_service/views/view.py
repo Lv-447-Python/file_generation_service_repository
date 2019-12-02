@@ -2,7 +2,7 @@
 from flask import request, jsonify
 from flask_restful import Resource
 from file_generation_service import api
-from rabbitmq.producer import start_generating_filtered_file
+from rabbitmq_folder.producer import start_generating_filtered_file
 
 
 class FileGenerationResource(Resource):
