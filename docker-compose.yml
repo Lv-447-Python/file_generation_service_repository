@@ -6,6 +6,7 @@ services:
     command: >
       /bin/bash -c "
         python run.py;
+        sleep 10;
         python rabbitmq_folder/consumer.py"
     ports:
       - "5000:5000"
