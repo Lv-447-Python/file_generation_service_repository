@@ -1,6 +1,7 @@
 import pika
 from configs import rabbitmq_config
 import worker
+# from logger.logger import logger
 
 
 def main():
@@ -9,7 +10,7 @@ def main():
     """
 
     connection = pika.BlockingConnection(
-        pika.ConnectionParameters('localhost'))
+        pika.ConnectionParameters('rabbitmq'))
 
     # logger.info(' [x] Connection created ')
 

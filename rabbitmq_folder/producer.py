@@ -14,7 +14,7 @@ def start_generating_filtered_file(message):
     """
 
     connection = pika.BlockingConnection(
-        pika.ConnectionParameters('localhost'))
+        pika.ConnectionParameters('rabbitmq'))
     channel = connection.channel()
     channel.queue_declare(
         queue=rabbitmq_config.file_generation_queue_name, durable=True)
