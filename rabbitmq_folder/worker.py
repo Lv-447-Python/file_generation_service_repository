@@ -9,24 +9,6 @@ from utils.xlsx_generator import generate_filtered_xlsx_file
 # from logger.logger import logger
 
 
-def check_ext(file_path):
-    """
-    Method for checking extension of file.
-    Args:
-        file_path:
-            The path to the file whose extension is being scanned.
-    Returns:
-        ext:
-            File extension.
-    """
-    try:
-        ext = file_path.split('.')[-1]
-    except AttributeError:
-        # logger.error('Poor file name...')
-        return None
-    return ext
-
-
 def request_to_file_service(file_id):
     """
     The method for request to file service, to get the path to the file.
@@ -112,9 +94,9 @@ def callback(ch, method, properties, body):
         # logger.error('Poor response from services...')
         return None
 
-    if check_ext(file_path) == 'csv':
+    if file_path.endswith('csv'):
         new_file_path = generate_filtered_csv_file(file_path, rows_id)
-    elif check_ext(file_path) in ['xls', 'xlsx']:
+    elif file_path.endswith(('xls', 'xlsx')):
         new_file_path = generate_filtered_xlsx_file(file_path, rows_id)
     else:
         # logger.error('Poor file name...')

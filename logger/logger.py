@@ -7,7 +7,7 @@ dictLogConfig = {
             "fileHandler":{
                 "class":"logging.FileHandler",
                 "formatter":"myFormatter",
-                "filename":"config2.log"
+                "filename":"./config2.log"
             },
             "streamHandler":{
                 "class":"logging.StreamHandler",

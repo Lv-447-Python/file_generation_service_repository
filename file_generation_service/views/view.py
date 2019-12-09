@@ -39,11 +39,11 @@ class TestFileResource(Resource):
 
         if request.args.get('file_id', type=int) == 1:
             result = jsonify({
-                'path': 'file_generation_service/static/Test_dataset_filterMe.csv',
+                'path': './static/Test_dataset_filterMe.csv',
                 'message': 'Success'})
         elif request.args.get('file_id', type=int) == 2:
             result = jsonify({
-                'path': 'static/Test_dataset_filterMe.xlsx',
+                'path': './static/Test_dataset_filterMe.xlsx',
                 'message': 'Success'})
         else:
             result = jsonify({
