@@ -1,5 +1,5 @@
 """Module for running Flask app"""
-from file_generation_service import app
+from file_gen_service import app
 
 
 # from file_generation_service.views import view
