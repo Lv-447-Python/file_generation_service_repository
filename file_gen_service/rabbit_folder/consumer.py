@@ -16,8 +16,8 @@ def main():
     connection = pika.BlockingConnection(
         pika.ConnectionParameters('localhost', 5672, '/', credentials))
 
-    logger.info(' [x] Connection created ')
-    print('[x] Connection created.')
+    logger.info('Connection created with %s', connection)
+
     channel = connection.channel()
 
     channel.queue_declare(
@@ -28,7 +28,7 @@ def main():
 
     channel.basic_qos(prefetch_count=1)
 
-    logger.info(' [x] Start consuming ')
+    logger.info('Start consuming channel %s', channel)
 
     channel.start_consuming()
 

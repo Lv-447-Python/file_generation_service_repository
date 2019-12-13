@@ -18,7 +18,7 @@ def start_generating_filtered_file(message):
     credentials = pika.PlainCredentials('admin', 'admin')
 
     connection = pika.BlockingConnection(
-        pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
+        pika.ConnectionParameters('localhost', 5672, '/', credentials))
     channel = connection.channel()
     channel.queue_declare(
         queue=rabbitmq_config.file_generation_queue_name, durable=True)
@@ -31,6 +31,6 @@ def start_generating_filtered_file(message):
                               content_type='aplication/json',
                           ))
 
-    logger.info(" [x] Send to queue ")
+    logger.info("Send message:%s to queue:%s", message, rabbitmq_config.file_generation_queue_name)
 
     connection.close()

@@ -1,13 +1,18 @@
 """Configuration module for logging"""
-from logging import getLogger, config
+import logging
+from logging import config
+
 
 dictLogConfig = {
     "version": 1,
     "handlers": {
         "fileHandler": {
-            "class": "logging.FileHandler",
+            "class": "logging.handlers.TimedRotatingFileHandler",
             "formatter": "myFormatter",
-            "filename": "./config2.log"
+            "filename": "file_gen_service/logs/filegenservice.log",
+            "when": "midnight",
+            "utc": True,
+            "backupCount": 2,
         },
         "streamHandler": {
             "class": "logging.StreamHandler",
@@ -33,5 +38,5 @@ dictLogConfig = {
     }
 }
 
-config.dictConfig(dictLogConfig)
-logger = getLogger("fileGenApp")
+logging.config.dictConfig(dictLogConfig)
+logger = logging.getLogger("fileGenApp")

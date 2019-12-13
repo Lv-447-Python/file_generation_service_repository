@@ -3,6 +3,7 @@ from flask import request, jsonify
 from flask_restful import Resource
 from file_gen_service import api
 from file_gen_service.rabbit_folder.producer import start_generating_filtered_file
+from file_gen_service.configs.logger import logger
 
 
 class FileGenerationResource(Resource):
@@ -29,9 +30,12 @@ class FileGenerationResource(Resource):
         }
 
         if None in data.values():
+            logger.error('Bad ID in %s', data)
             return 'Bad ID', 400
         else:
+
             start_generating_filtered_file(data)
+            logger.info('Start generating file to: %s', data)
             return 'Your request has been submitted for processing', 200
 
 

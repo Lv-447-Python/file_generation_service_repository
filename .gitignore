@@ -754,6 +754,7 @@ MigrationBackup/
 .vscode/
 .vscode/*
 file_gen_service/files
+file_gen_service/logs
 
 
 # End of https://www.gitignore.io/api/vim,flask,python,pycharm,virtualenv,pycharm+all,pycharm+iml,visualstudio,visualstudiocode
