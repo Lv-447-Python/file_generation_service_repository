@@ -1,9 +1,9 @@
 """Module for file generation resource"""
 from flask import request, jsonify
 from flask_restful import Resource
-from file_gen_service import api
+from file_gen_service import API
 from file_gen_service.rabbit_folder.producer import start_generating_filtered_file
-from file_gen_service.configs.logger import logger
+from file_gen_service.configs.logger import LOGGER
 
 
 class FileGenerationResource(Resource):
@@ -30,12 +30,12 @@ class FileGenerationResource(Resource):
         }
 
         if None in data.values():
-            logger.error('Bad ID in %s', data)
+            LOGGER.error('Bad ID in %s', data)
             return 'Bad ID', 400
         else:
 
             start_generating_filtered_file(data)
-            logger.info('Start generating file to: %s', data)
+            LOGGER.info('Start generating file to: %s', data)
             return 'Your request has been submitted for processing', 200
 
 
@@ -51,11 +51,11 @@ class TestFileResource(Resource):
 
         if request.args.get('file_id', type=int) == 1:
             result = jsonify({
-                'path': '/file_generation_service_repo/file_generation_service/static/Test_dataset_filterMe.csv',
+                'path': '/file_generation_service_repo/file_gen_service/files/Test_dataset_filterMe.csv',
                 'message': 'Success'})
         elif request.args.get('file_id', type=int) == 2:
             result = jsonify({
-                'path': '/file_generation_service_repo/file_generation_service/static/Test_dataset_filterMe.xlsx',
+                'path': '/file_generation_service_repo/file_gen_service/files/Test_dataset_filterMe.xlsx',
                 'message': 'Success'})
         else:
             result = jsonify({
@@ -88,7 +88,7 @@ class TestHistoryResource(Resource):
         return result
 
 
-api.add_resource(FileGenerationResource,
+API.add_resource(FileGenerationResource,
                  '/generate_new_file/user/<int:user_id>/file/<int:file_id>/filter/<int:filter_id>')
-api.add_resource(TestFileResource, '/testfile')
-api.add_resource(TestHistoryResource, '/testhistory')
+API.add_resource(TestFileResource, '/testfile')
+API.add_resource(TestHistoryResource, '/testhistory')

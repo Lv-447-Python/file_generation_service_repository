@@ -9,7 +9,7 @@ dictLogConfig = {
         "fileHandler": {
             "class": "logging.handlers.TimedRotatingFileHandler",
             "formatter": "myFormatter",
-            "filename": "file_gen_service/logs/filegenservice.log",
+            "filename": "../filegenservice.log",
             "when": "midnight",
             "utc": True,
             "backupCount": 2,
@@ -39,4 +39,4 @@ dictLogConfig = {
 }
 
 logging.config.dictConfig(dictLogConfig)
-logger = logging.getLogger("fileGenApp")
+LOGGER = logging.getLogger("fileGenApp")

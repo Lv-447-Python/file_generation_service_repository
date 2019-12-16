@@ -4,7 +4,7 @@ import json
 import pika
 
 from file_gen_service.configs import rabbitmq_config
-from file_gen_service.configs.logger import logger
+from file_gen_service.configs.logger import LOGGER
 
 
 def start_generating_filtered_file(message):
@@ -18,7 +18,7 @@ def start_generating_filtered_file(message):
     credentials = pika.PlainCredentials('admin', 'admin')
 
     connection = pika.BlockingConnection(
-        pika.ConnectionParameters('localhost', 5672, '/', credentials))
+        pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
     channel = connection.channel()
     channel.queue_declare(
         queue=rabbitmq_config.file_generation_queue_name, durable=True)
@@ -31,6 +31,6 @@ def start_generating_filtered_file(message):
                               content_type='aplication/json',
                           ))
 
-    logger.info("Send message:%s to queue:%s", message, rabbitmq_config.file_generation_queue_name)
+    LOGGER.info("Send message:%s to queue:%s", message, rabbitmq_config.file_generation_queue_name)
 
     connection.close()

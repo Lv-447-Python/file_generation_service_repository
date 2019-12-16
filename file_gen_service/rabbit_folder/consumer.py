@@ -3,7 +3,7 @@ import pika
 
 from file_gen_service.rabbit_folder import worker
 from file_gen_service.configs import rabbitmq_config
-from file_gen_service.configs.logger import logger
+from file_gen_service.configs.logger import LOGGER
 
 
 def main():
@@ -14,9 +14,9 @@ def main():
     credentials = pika.PlainCredentials('admin', 'admin')
 
     connection = pika.BlockingConnection(
-        pika.ConnectionParameters('localhost', 5672, '/', credentials))
+        pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
 
-    logger.info('Connection created with %s', connection)
+    LOGGER.info('Connection created with %s', connection)
 
     channel = connection.channel()
 
@@ -28,7 +28,7 @@ def main():
 
     channel.basic_qos(prefetch_count=1)
 
-    logger.info('Start consuming channel %s', channel)
+    LOGGER.info('Start consuming channel %s', channel)
 
     channel.start_consuming()
 

@@ -5,7 +5,7 @@ import json
 import requests
 from file_gen_service.utils.csv_generator import generate_filtered_csv_file
 from file_gen_service.utils.xlsx_generator import generate_filtered_xlsx_file
-from file_gen_service.configs.logger import logger
+from file_gen_service.configs.logger import LOGGER
 
 
 def request_to_file_service(file_id):
@@ -27,11 +27,11 @@ def request_to_file_service(file_id):
 
     if result_of_request.status_code == 200:
         data = result_of_request.json()
-        logger.info('Success request to file service')
+        LOGGER.info('Success request to file service')
         file_path = data['path']
         return file_path
     else:
-        logger.error('Error request to file service')
+        LOGGER.error('Error request to file service')
         return None
 
 
@@ -56,11 +56,11 @@ def request_to_history_service(user_id, file_id, filter_id):
 # TODO: check request to service
     if result_of_request.status_code == 200:
         data = result_of_request.json()
-        logger.info('Success request to history service')
+        LOGGER.info('Success request to history service')
         rows_id = data['rows_id']
         return rows_id
     else:
-        logger.error('Error request to history service')
+        LOGGER.error('Error request to history service')
         return None
 
 
@@ -92,7 +92,7 @@ def callback(ch, method, properties, body):
         file_path = request_to_file_service(file_id)
         rows_id = request_to_history_service(user_id, file_id, filter_id)
     except TypeError:
-        logger.error('Poor response from services...')
+        LOGGER.error('Poor response from services...')
         return None
 
     if file_path.endswith('csv'):
@@ -100,9 +100,9 @@ def callback(ch, method, properties, body):
     elif file_path.endswith(('xls', 'xlsx')):
         new_file_path = generate_filtered_xlsx_file(file_path, rows_id)
     else:
-        logger.error('Poor file name...')
+        LOGGER.error('Poor file name...')
         return None
 
-    logger.info('New file path: %s', new_file_path)
+    LOGGER.info('New file path: %s', new_file_path)
 # TODO: push to notification and sharing
     return new_file_path
