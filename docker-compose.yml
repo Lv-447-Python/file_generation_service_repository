@@ -14,9 +14,7 @@ services:
 
   web:
     build: .
-    command: bash -c "export PYTHONPATH="${PYTHONPATH}:/file_generation_service_repo" && supervisord -c supervisord.conf && python3 run.py "
-    ports:
-      - "5000:5000"
+    command: bash -c "export PYTHONPATH="${PYTHONPATH}:/file_generation_service_repo" && supervisord -c supervisord.conf && python3 run.py"
     volumes:
       - .:/file_generation_service_repo
     restart: always

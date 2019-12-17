@@ -33,7 +33,6 @@ class FileGenerationResource(Resource):
             LOGGER.error('Bad ID in %s', data)
             return 'Bad ID', 400
         else:
-
             start_generating_filtered_file(data)
             LOGGER.info('Start generating file to: %s', data)
             return 'Your request has been submitted for processing', 200
