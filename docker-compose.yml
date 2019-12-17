@@ -6,15 +6,18 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    labels:
+      NAME: "rabbitmq"
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
-    labels:
-      NAME: "rabbitmq"
+      - RABBITMQ_DEFAULT_VHOST=vhost
+#    volumes:
+#    - ./rabbit_start.sh:/init.sh
 
   web:
     build: .
-    command: bash -c "export PYTHONPATH="${PYTHONPATH}:/file_generation_service_repo" && supervisord -c supervisord.conf && python3 run.py "
+    command: bash -c "supervisord -c supervisord.conf && python3 run.py"
     ports:
       - "5000:5000"
     volumes:
