@@ -9,7 +9,7 @@ from file_gen_service.configs.logger import LOGGER
 class FileGenerationResource(Resource):
     """File generation resource class."""
 
-    def get(self, user_id, file_id, filter_id):
+    def get(self, file_id, filter_id):
         """
         Method for HTTP GET method working out. Used for start generation filtered file.
         Args:
@@ -23,71 +23,20 @@ class FileGenerationResource(Resource):
             Message and status code.
         """
 
-        data = {
-            'user_id': user_id,
-            'file_id': file_id,
-            'filter_id': filter_id
-        }
-
-        if None in data.values():
-            LOGGER.error('Bad ID in %s', data)
-            return 'Bad ID', 400
-        else:
-            start_generating_filtered_file(data)
-            LOGGER.info('Start generating file to: %s', data)
-            return 'Your request has been submitted for processing', 200
+        LOGGER.info('HAHA REQUEST')
+        LOGGER.info(request.cookies['session'])
+        LOGGER.info("FILE ID %s", file_id)
+        LOGGER.info("FILTER_ID %s", filter_id)
 
 
-class TestFileResource(Resource):
-    """Test file resource"""
-
-    def get(self):
-        """
-        Method for HTTP GET method working out. Used for start generation filtered file.
-        Returns:
-            Json file with path to file, message and status code.
-        """
-
-        if request.args.get('file_id', type=int) == 1:
-            result = jsonify({
-                'path': '/file_generation_service_repo/file_gen_service/files/Test_dataset_filterMe.csv',
-                'message': 'Success'})
-        elif request.args.get('file_id', type=int) == 2:
-            result = jsonify({
-                'path': '/file_generation_service_repo/file_gen_service/files/Test_dataset_filterMe.xlsx',
-                'message': 'Success'})
-        else:
-            result = jsonify({
-                'error': 'File with such id not found'
-            })
-
-        return result
-
-
-class TestHistoryResource(Resource):
-    """Test history resource"""
-
-    def get(self):
-        """
-        Method for HTTP GET method working out. Used for start generation filtered file.
-        Returns:
-            Json file rows_id message and status code.
-        """
-
-        result = jsonify(
-            {
-                'user_id': 1,
-                'file_id': 2,
-                'filter_id': 3,
-                'rows_id': list(range(1, 500, 3)),
-                'date': 12345
-            }
-        )
-
-        return result
+        # if None in data.values():
+        #     LOGGER.error('Bad ID in %s', data)
+        #     return 'Bad ID', 400
+        # else:
+        #     start_generating_filtered_file(data)
+        #     LOGGER.info('Start generating file to: %s', data)
+        #     return 'Your request has been submitted for processing', 200
 
 
 API.add_resource(FileGenerationResource,
-                 '/generate_new_file/user/<int:user_id>/file/<int:file_id>/filter/<int:filter_id>')
-API.add_resource(TestFileResource, '/testfile')
-API.add_resource(TestHistoryResource, '/testhistory')
+                 '/generate_new_file/file/<int:file_id>/filter/<int:filter_id>')
