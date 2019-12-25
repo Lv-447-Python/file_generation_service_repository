@@ -21,7 +21,7 @@ def start_generating_filtered_file(message):
         pika.ConnectionParameters('rabbitmq', 5672, '/', credentials))
     channel = connection.channel()
     channel.queue_declare(
-        queue=rabbitmq_config.file_generation_queue_name, durable=True)
+        queue=rabbitmq_config.file_generation_queue_name)
 
     channel.basic_publish(exchange='',
                           routing_key=rabbitmq_config.file_generation_routing_key,

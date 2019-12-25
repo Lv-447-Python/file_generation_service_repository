@@ -21,7 +21,7 @@ def main():
     channel = connection.channel()
 
     channel.queue_declare(
-        queue=rabbitmq_config.file_generation_queue_name, durable=True)
+        queue=rabbitmq_config.file_generation_queue_name)
 
     channel.basic_consume(
         queue=rabbitmq_config.file_generation_queue_name, on_message_callback=worker.callback, auto_ack=True)

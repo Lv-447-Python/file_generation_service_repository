@@ -1,5 +1,6 @@
 """Module for generation new xls/xlsx files"""
 import pandas
+from file_gen_service.configs.logger import LOGGER
 from file_gen_service.utils.path_generator import new_path_generator
 
 
@@ -21,10 +22,12 @@ def generate_filtered_xlsx_file(file_path, rows_id):
 
     df = pandas.DataFrame(data)
 
-    filtered_data = df[df['ID'].isin(rows_id)]
+    filtered_data = df.loc[set(rows_id)]
 
     new_file_path = new_path_generator(file_path)
 
     filtered_data.to_excel(new_file_path, index=False, header=True)
+
+    LOGGER.info('New file path: %s', new_file_path)
 
     return new_file_path

@@ -1,12 +1,40 @@
 #!usr/bin/env python
 """Module for generating filtered file"""
 import json
-
+from flask import send_file, send_from_directory, safe_join, abort
 import requests
 from file_gen_service.utils.csv_generator import generate_filtered_csv_file
 from file_gen_service.utils.xlsx_generator import generate_filtered_xlsx_file
 from file_gen_service.configs.logger import LOGGER
 
+
+# def post_request_to_file_service(file_path):
+#     file_url = "http://web-file:5000/files"
+#     try:
+#         file = open(file_path, 'rb')
+#         files_to_load = {'user_file': file}
+#     except FileNotFoundError as err:
+#         LOGGER.info(err)
+#         LOGGER.info("--------------------- CANT OPEN FIL")
+#
+#     result = requests.post(
+#         url=file_url,
+#         files=files_to_load
+#     )
+
+def post_request_to_sharing_service(file_path):
+    sharing_url = "http://web-sharing:5000/download"
+    try:
+        file = open(file_path, 'rb')
+        file_to_load = {'generated_file': file}
+    except FileNotFoundError as err:
+        LOGGER.error(err)
+        LOGGER.error("----------------CANT'T OPEN FILE")
+
+    result = requests.post(
+        url=sharing_url,
+        files=file_to_load
+    )
 
 def request_to_file_service(file_id):
     """
@@ -20,10 +48,8 @@ def request_to_file_service(file_id):
     """
 
     result_of_request = requests.get(
-        f'http://localhost:5000/testfile?file_id={file_id}')
-    # result_of_request = requests.get(f'http://localhost:5000/file/{file_id}')
-
-# TODO: check request to service
+        url=f'http://web-file:5000/file/{file_id}'
+    )
 
     if result_of_request.status_code == 200:
         data = result_of_request.json()
@@ -35,12 +61,12 @@ def request_to_file_service(file_id):
         return None
 
 
-def request_to_history_service(user_id, file_id, filter_id):
+def request_to_history_service(session, file_id, filter_id):
     """
     The method for request to history service, to get the rows id of the filtered file.
     Args:
-        user_id:
-            The user ID for which you want to get filtered rows.
+        session:
+            The user session for which you want to get filtered rows.
         file_id:
             The ID of the file you want to get.
         filter_id:
@@ -50,10 +76,10 @@ def request_to_history_service(user_id, file_id, filter_id):
             The line numbers that were obtained after filtering the file by the user.
     """
 
-    result_of_request = requests.get('http://localhost:5000/testhistory')
-    # result_of_request = requests.get(
-    #     f'http://localhost:5000/history/user/{user_id}/file/{file_id}/filter/{filter_id}')
-# TODO: check request to service
+    result_of_request = requests.get(
+        url=f'http://web-history:5000/history/file/{file_id}/filter/{filter_id}',
+        cookies={'session': session}
+    )
     if result_of_request.status_code == 200:
         data = result_of_request.json()
         LOGGER.info('Success request to history service')
@@ -62,7 +88,6 @@ def request_to_history_service(user_id, file_id, filter_id):
     else:
         LOGGER.error('Error request to history service')
         return None
-
 
 def callback(ch, method, properties, body):
     """
@@ -84,13 +109,13 @@ def callback(ch, method, properties, body):
     """
 
     req = json.loads(body)
-    user_id = req['user_id']
+    session = req['session']
     file_id = req['file_id']
     filter_id = req['filter_id']
 
     try:
         file_path = request_to_file_service(file_id)
-        rows_id = request_to_history_service(user_id, file_id, filter_id)
+        rows_id = request_to_history_service(session, file_id, filter_id)
     except TypeError:
         LOGGER.error('Poor response from services...')
         return None
@@ -103,6 +128,9 @@ def callback(ch, method, properties, body):
         LOGGER.error('Poor file name...')
         return None
 
-    LOGGER.info('New file path: %s', new_file_path)
-# TODO: push to notification and sharing
+    sharing_response = post_request_to_sharing_service(new_file_path)
+    # file_response = post_request_to_file_service(new_file_path)
+
+    # LOGGER.info(f'-------------------- File response in FILEGENAPP {file_response.status_code}')
+    # TODO: push to notification and sharing
     return new_file_path

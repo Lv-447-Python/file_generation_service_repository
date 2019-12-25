@@ -23,19 +23,19 @@ class FileGenerationResource(Resource):
             Message and status code.
         """
 
-        LOGGER.info('HAHA REQUEST')
-        LOGGER.info(request.cookies['session'])
-        LOGGER.info("FILE ID %s", file_id)
-        LOGGER.info("FILTER_ID %s", filter_id)
+        data = {
+            "session": request.cookies['session'],
+            "file_id": file_id,
+            "filter_id": filter_id
+        }
 
-
-        # if None in data.values():
-        #     LOGGER.error('Bad ID in %s', data)
-        #     return 'Bad ID', 400
-        # else:
-        #     start_generating_filtered_file(data)
-        #     LOGGER.info('Start generating file to: %s', data)
-        #     return 'Your request has been submitted for processing', 200
+        if None in data.values():
+            LOGGER.error('Bad ID in %s', data)
+            return 'Bad ID', 400
+        else:
+            start_generating_filtered_file(data)
+            LOGGER.info('Start generating file to: %s', data)
+            return 'Your request has been submitted for processing', 200
 
 
 API.add_resource(FileGenerationResource,
