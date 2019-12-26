@@ -39,4 +39,4 @@ class FileGenerationResource(Resource):
 
 
 API.add_resource(FileGenerationResource,
-                 '/generate_new_file/file/<int:file_id>/filter/<int:filter_id>')
+                 '/file-generation/api/generate_new_file/file/<int:file_id>/filter/<int:filter_id>')

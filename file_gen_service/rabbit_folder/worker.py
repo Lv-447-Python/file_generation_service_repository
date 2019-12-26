@@ -8,22 +8,8 @@ from file_gen_service.utils.xlsx_generator import generate_filtered_xlsx_file
 from file_gen_service.configs.logger import LOGGER
 
 
-# def post_request_to_file_service(file_path):
-#     file_url = "http://web-file:5000/files"
-#     try:
-#         file = open(file_path, 'rb')
-#         files_to_load = {'user_file': file}
-#     except FileNotFoundError as err:
-#         LOGGER.info(err)
-#         LOGGER.info("--------------------- CANT OPEN FIL")
-#
-#     result = requests.post(
-#         url=file_url,
-#         files=files_to_load
-#     )
-
 def post_request_to_sharing_service(file_path):
-    sharing_url = "http://web-sharing:5000/download"
+    sharing_url = "http://web-sharing:5000/file-sharing/api/download"
     try:
         file = open(file_path, 'rb')
         file_to_load = {'generated_file': file}
@@ -48,7 +34,7 @@ def request_to_file_service(file_id):
     """
 
     result_of_request = requests.get(
-        url=f'http://web-file:5000/file/{file_id}'
+        url=f'http://web-file:5000/file-service/api/file/{file_id}'
     )
 
     if result_of_request.status_code == 200:
@@ -77,7 +63,7 @@ def request_to_history_service(session, file_id, filter_id):
     """
 
     result_of_request = requests.get(
-        url=f'http://web-history:5000/history/file/{file_id}/filter/{filter_id}',
+        url=f'http://web-history:5000/history-service/api/history/file/{file_id}/filter/{filter_id}',
         cookies={'session': session}
     )
     if result_of_request.status_code == 200:
