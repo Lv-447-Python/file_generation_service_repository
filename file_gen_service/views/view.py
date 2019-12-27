@@ -9,6 +9,21 @@ from file_gen_service.configs.logger import LOGGER
 class FileGenerationResource(Resource):
     """File generation resource class."""
 
+    @staticmethod
+    def existence_check(file_id, filter_id):
+
+        result = requests.get(
+            url='http://web-sharing:5000/download',
+            headers={
+                'filter_id': filter_id,
+                'input_file_id': file_id
+            }
+        )
+        if result.status_code == 302:
+            return True
+        else:
+            return False
+
     def get(self, file_id, filter_id):
         """
         Method for HTTP GET method working out. Used for start generation filtered file.
@@ -31,11 +46,30 @@ class FileGenerationResource(Resource):
 
         if None in data.values():
             LOGGER.error('Bad ID in %s', data)
-            return 'Bad ID', 400
+            return make_response(
+                jsonify({
+                    'message': 'Bad id'
+                }),
+                status.HTTP_400_BAD_REQUEST
+            )
         else:
-            start_generating_filtered_file(data)
-            LOGGER.info('Start generating file to: %s', data)
-            return 'Your request has been submitted for processing', 200
+            exist = FileGenerationResource.existence_check(file_id, filter_id)
+            if exist:
+                return make_response(
+                    jsonify({
+                        'message': 'File already exist'
+                    }),
+                    status.HTTP_302_FOUND
+                )
+            else:
+                start_generating_filtered_file(data)
+                LOGGER.info('Start generating file to: %s', data)
+                return make_response(
+                    jsonify({
+                        'message': 'Start generating file'
+                    }),
+                    status.HTTP_201_CREATED
+                )
 
 
 API.add_resource(FileGenerationResource,
