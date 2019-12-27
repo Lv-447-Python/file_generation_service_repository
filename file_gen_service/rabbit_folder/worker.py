@@ -22,6 +22,7 @@ def post_request_to_sharing_service(file_path):
         files=file_to_load
     )
 
+
 def request_to_file_service(file_id):
     """
     The method for request to file service, to get the path to the file.
@@ -75,6 +76,7 @@ def request_to_history_service(session, file_id, filter_id):
         LOGGER.error('Error request to history service')
         return None
 
+
 def callback(ch, method, properties, body):
     """
     A function that is called when a message is received from a queue
@@ -114,9 +116,6 @@ def callback(ch, method, properties, body):
         LOGGER.error('Poor file name...')
         return None
 
-    sharing_response = post_request_to_sharing_service(new_file_path)
-    # file_response = post_request_to_file_service(new_file_path)
+    post_request_to_sharing_service(new_file_path)
+    #post_request_to_file_service(new_file_path)
 
-    # LOGGER.info(f'-------------------- File response in FILEGENAPP {file_response.status_code}')
-    # TODO: push to notification and sharing
-    return new_file_path
