@@ -24,6 +24,6 @@ urllib3==1.25.6
 Werkzeug==0.16.0
 xlsxwriter==1.2.5
 xlrd==1.2.0
-numpy==1.17.4
+numpy==1.22.0
 pandas==0.25.3
 pika==1.1.0
